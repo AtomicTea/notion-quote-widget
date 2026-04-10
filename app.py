@@ -23,39 +23,43 @@ def get_quotes():
 
     quotes = []
 
-    for page in data["results"]:
-        props = page["properties"]
+    for page in data.get("results", []):
+        props = page.get("properties", {})
 
-        try:
-            quote = props["Quote"]["title"][0]["plain_text"]
-        except:
+        # Safe quote
+        title_data = props.get("Quote", {}).get("title", [])
+        if not title_data:
             continue
+        quote = title_data[0].get("plain_text", "")
 
-        author = "Unknown"
-        if props["Author"]["rich_text"]:
-            author = props["Author"]["rich_text"][0]["plain_text"]
+        # Safe author
+        author_data = props.get("Author", {}).get("rich_text", [])
+        author = author_data[0].get("plain_text", "Unknown") if author_data else "Unknown"
 
         quotes.append(f'"{quote}" — {author}')
 
     return quotes
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "HEAD"]))
 def quote_of_day():
-    quotes = get_quotes()
+    try:
+        quotes = get_quotes()
 
-    if not quotes:
-        return "No quotes found."
+        if not quotes:
+            return "No quotes found. Check Notion setup."
 
-    # Deterministic daily quote
-    index = datetime.now().timetuple().tm_yday % len(quotes)
-    quote = quotes[index]
+        index = datetime.now().timetuple().tm_yday % len(quotes)
+        quote = quotes[index]
 
-    return f"""
-    <div style="font-family: Georgia; padding:40px; text-align:center;">
-        <p style="font-size:22px;">{quote}</p>
-    </div>
-    """
+        return f"""
+           <div style="font-family: Georgia; padding:40px; text-align:center;">
+               <p style="font-size:22px;">{quote}</p>
+           </div>
+           """
+
+    except Exception as e:
+        return f"ERROR: {str(e)}"
 
 
 if __name__ == "__main__":
