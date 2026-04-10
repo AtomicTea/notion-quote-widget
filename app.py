@@ -21,24 +21,38 @@ def get_quotes():
     response = requests.post(url, headers=headers)
     data = response.json()
 
-    quotes = []
+    def get_quotes():
+        url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
 
-    for page in data.get("results", []):
-        props = page.get("properties", {})
+        headers = {
+            "Authorization": f"Bearer {NOTION_API_KEY}",
+            "Notion-Version": "2022-06-28"
+        }
 
-        # Safe quote
-        title_data = props.get("Quote", {}).get("title", [])
-        if not title_data:
-            continue
-        quote = title_data[0].get("plain_text", "")
+        response = requests.post(url, headers=headers)
+        data = response.json()
 
-        # Safe author
-        author_data = props.get("Author", {}).get("rich_text", [])
-        author = author_data[0].get("plain_text", "Unknown") if author_data else "Unknown"
+        quotes = []
 
-        quotes.append(f'"{quote}" — {author}')
+        for page in data.get("results", []):
+            props = page.get("properties", {})
 
-    return quotes
+            # --- Quote (title field) ---
+            quote_list = props.get("Quote", {}).get("title", [])
+            if not quote_list:
+                continue
+            quote = quote_list[0].get("plain_text", "").strip()
+
+            if not quote:
+                continue
+
+            # --- Author (rich text field) ---
+            author_list = props.get("Author", {}).get("rich_text", [])
+            author = author_list[0].get("plain_text", "Unknown") if author_list else "Unknown"
+
+            quotes.append(f'{quote} — {author}')
+
+        return quotes
 
 
 #@app.route("/", methods=["GET", "HEAD"])
