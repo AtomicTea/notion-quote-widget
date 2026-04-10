@@ -75,8 +75,8 @@ def get_quotes():
     except Exception as e:
         return f"ERROR: {str(e)}"
 
-@app.route("/", methods=["GET", "HEAD"])
-def quote_of_day():
+#@app.route("/", methods=["GET", "HEAD"])
+#def quote_of_day():
     response = requests.post(
         f"https://api.notion.com/v1/databases/{DATABASE_ID}/query",
         headers={
@@ -85,7 +85,10 @@ def quote_of_day():
         }
     )
     return response.text
-
+@app.route("/", methods=["GET", "HEAD"])
+def quote_of_day():
+    quotes = get_quotes()
+    return f"QUOTE COUNT: {len(quotes)}"
 
 if __name__ == "__main__":
     app.run()
