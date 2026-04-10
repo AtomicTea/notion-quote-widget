@@ -75,20 +75,21 @@ def get_quotes():
     except Exception as e:
         return f"ERROR: {str(e)}"
 
-#@app.route("/", methods=["GET", "HEAD"])
-#def quote_of_day():
-    response = requests.post(
-        f"https://api.notion.com/v1/databases/{DATABASE_ID}/query",
-        headers={
-            "Authorization": f"Bearer {NOTION_API_KEY}",
-            "Notion-Version": "2022-06-28"
-        }
-    )
-    return response.text
 @app.route("/", methods=["GET", "HEAD"])
 def quote_of_day():
     quotes = get_quotes()
-    return f"QUOTE COUNT: {len(quotes)}"
+
+    if not quotes:
+        return "No quotes found."
+
+    index = datetime.now().timetuple().tm_yday % len(quotes)
+    quote = quotes[index]
+
+    return f"""
+    <div style="font-family: Georgia; padding:40px; text-align:center;">
+        <p style="font-size:24px;">{quote}</p>
+    </div>
+    """
 
 if __name__ == "__main__":
     app.run()
