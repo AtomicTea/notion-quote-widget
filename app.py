@@ -41,7 +41,7 @@ def get_quotes():
     return quotes
 
 
-@app.route("/", methods=["GET", "HEAD"]))
+@app.route("/", methods=["GET", "HEAD"])
 def quote_of_day():
     try:
         quotes = get_quotes()
