@@ -41,8 +41,8 @@ def get_quotes():
     return quotes
 
 
-@app.route("/", methods=["GET", "HEAD"])
-def quote_of_day():
+#@app.route("/", methods=["GET", "HEAD"])
+#def quote_of_day():
     try:
         quotes = get_quotes()
 
@@ -60,6 +60,17 @@ def quote_of_day():
 
     except Exception as e:
         return f"ERROR: {str(e)}"
+
+@app.route("/", methods=["GET", "HEAD"])
+def quote_of_day():
+    response = requests.post(
+        f"https://api.notion.com/v1/databases/{DATABASE_ID}/query",
+        headers={
+            "Authorization": f"Bearer {NOTION_API_KEY}",
+            "Notion-Version": "2022-06-28"
+        }
+    )
+    return response.text
 
 
 if __name__ == "__main__":
