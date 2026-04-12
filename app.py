@@ -54,29 +54,31 @@ def get_quotes():
 
         return quotes
 
+    from datetime import datetime
+
+    @app.route("/", methods=["GET", "HEAD"])
+    def quote_of_day():
+        try:
+            quotes = get_quotes()
+
+            if not quotes:
+                return "No quotes found."
+
+            index = datetime.now().timetuple().tm_yday % len(quotes)
+            quote = quotes[index]
+
+            return f"""
+            <div style="font-family: Georgia; padding:40px; text-align:center;">
+                <p style="font-size:24px;">{quote}</p>
+            </div>
+            """
+
+        except Exception as e:
+            return f"ERROR: {str(e)}"
+
 
 #@app.route("/", methods=["GET", "HEAD"])
 #def quote_of_day():
-    try:
-        quotes = get_quotes()
-
-        if not quotes:
-            return "No quotes found. Check Notion setup."
-
-        index = datetime.now().timetuple().tm_yday % len(quotes)
-        quote = quotes[index]
-
-        return f"""
-           <div style="font-family: Georgia; padding:40px; text-align:center;">
-               <p style="font-size:22px;">{quote}</p>
-           </div>
-           """
-
-    except Exception as e:
-        return f"ERROR: {str(e)}"
-
-@app.route("/", methods=["GET", "HEAD"])
-def quote_of_day():
     quotes = get_quotes()
 
     if not quotes:
@@ -90,6 +92,15 @@ def quote_of_day():
         <p style="font-size:24px;">{quote}</p>
     </div>
     """
+@app.route("/", methods=["GET", "HEAD"])
+def quote_of_day():
+    try:
+        quotes = get_quotes()
+
+        return f"DEBUG: got {len(quotes)} quotes"
+
+    except Exception as e:
+        return f"ERROR: {str(e)}"
 
 if __name__ == "__main__":
     app.run()
