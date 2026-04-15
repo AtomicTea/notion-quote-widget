@@ -129,22 +129,8 @@ def quote_of_day():
                 letter-spacing: 1.5px;
                 opacity: 0.6;
             ">
-                DAILY EDITION
+                DAILY QUOTE
             </div>
-
-            <!-- Refresh button -->
-            <button onclick="location.reload()" style="
-                margin-top: 16px;
-                padding: 6px 12px;
-                background: transparent;
-                border: 1px solid #2b2b2b;
-                border-radius: 8px;
-                font-size: 11px;
-                letter-spacing: 1px;
-                cursor: pointer;
-            ">
-                NEW QUOTE
-            </button>
 
         </div>
         """
